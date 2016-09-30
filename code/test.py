@@ -93,9 +93,9 @@ def speed():
     to_exec = [True] * len(algo)
 #    to_exec = [False] * len(algo)
 #    to_exec[-1] = True
-    do_float64 = False
+    do_float64 = True
     do_float32 = True
-    do_gpu = False
+    do_gpu = True
 
     algo_executed = [s for idx, s in enumerate(algo) if to_exec[idx]]
     #Timming expected are from the buildbot that have an i7-920 @
@@ -188,18 +188,23 @@ def speed():
                   saveto='')
         return numpy.asarray(l)
 
-    def write_junit(algos, times):
-        with open('speedtests.xml', 'w') as f:
+    # Prepare speed tests timing JUnit file and define write method
+
+    speed_file = 'speedtests.xml'
+
+    with open(speed_file, 'w') as f:
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write('<testsuites>\n')
-            f.write('   <testsuite name="float32" tests="{ntests}">\n'
+
+    def write_junit(filename, algos, times, label):
+        with open(filename, 'a') as f:
+            f.write('   <testsuite name="theano_speedtests" tests="{ntests}">\n'
                     .format(ntests=numpy.size(times)))
             for algo, time in zip(algos, times):
-                f.write('       <testcase name="{algo}" time="{time}">'
-                        .format(algo=algo, time=time))
+                f.write('       <testcase class="test.speed.{label}" name="{algo}" time="{time}">'
+                        .format(label=label, algo=algo, time=time))
                 f.write('       </testcase>\n')
             f.write('   </testsuite>\n')
-            f.write('</testsuites>\n')
 
     #test in float64 in FAST_RUN mode on the cpu
     import theano
@@ -207,6 +212,7 @@ def speed():
         theano.config.floatX = 'float64'
         theano.config.mode = 'FAST_RUN'
         float64_times = do_tests()
+        write_junit(speed_file, algo_executed, float64_times, label='float64')
         print(algo_executed, file=sys.stderr)
         print('float64 times', float64_times, file=sys.stderr)
         print('float64 expected', expected_times_64, file=sys.stderr)
@@ -217,7 +223,7 @@ def speed():
     theano.config.floatX = 'float32'
     if do_float32:
         float32_times = do_tests()
-        write_junit(algo_executed, float32_times)
+        write_junit(speed_file, algo_executed, float32_times, label='float32')
         print(algo_executed, file=sys.stderr)
         print('float32 times', float32_times, file=sys.stderr)
         print('float32 expected', expected_times_32, file=sys.stderr)
@@ -250,6 +256,7 @@ def speed():
     if do_gpu:
         theano.sandbox.cuda.use('gpu')
         gpu_times = do_tests()
+        write_junit(speed_file, algo_executed, gpu_times, label='gpu')
         print(algo_executed, file=sys.stderr)
         print('gpu times', gpu_times, file=sys.stderr)
         print('gpu expected', expected_times_gpu, file=sys.stderr)
@@ -313,3 +320,8 @@ def speed():
         print('speed_failure_gpu=' + str(err), file=sys.stderr)
 
         assert not numpy.isnan(gpu_times).any()
+    
+    # Close speed test JUnit file
+
+    with open(speed_file, 'a') as f:
+        f.write('</testsuites>\n')
