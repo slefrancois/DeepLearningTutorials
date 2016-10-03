@@ -300,7 +300,7 @@ def speed():
 
         assert not numpy.isnan(gpu_times).any()
     
-    # Close speed test JUnit file
+    # Write JUnit xml for speed test performance report
 
     speed_file = 'speedtests_time.xml'
 
@@ -320,7 +320,7 @@ def speed():
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         f.write('<testsuites>\n')
         f.write('   <testsuite name="theano_speedtests" tests="{ntests}">\n'
-                .format(ntests=numpy.size(times)))
+                .format(ntests=numpy.size(test_total)))
 
     write_junit(speed_file, algo_executed, float64_times, label='float64')
     write_junit(speed_file, algo_executed, float32_times, label='float32')
