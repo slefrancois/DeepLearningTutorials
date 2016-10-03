@@ -195,16 +195,15 @@ def speed():
     with open(speed_file, 'w') as f:
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write('<testsuites>\n')
+            f.write('   <testsuite name="theano_speedtests" tests="{ntests}">\n'
 
     def write_junit(filename, algos, times, label):
         with open(filename, 'a') as f:
-            f.write('   <testsuite name="theano_speedtests" tests="{ntests}">\n'
                     .format(ntests=numpy.size(times)))
             for algo, time in zip(algos, times):
                 f.write('       <testcase classname="speed.{label}" name="{algo}" time="{time}">'
                         .format(label=label, algo=algo, time=time))
                 f.write('       </testcase>\n')
-            f.write('   </testsuite>\n')
 
     #test in float64 in FAST_RUN mode on the cpu
     import theano
@@ -324,4 +323,5 @@ def speed():
     # Close speed test JUnit file
 
     with open(speed_file, 'a') as f:
+        f.write('   </testsuite>\n')
         f.write('</testsuites>\n')
