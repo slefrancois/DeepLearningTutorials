@@ -190,7 +190,7 @@ def speed():
 
     # Prepare speed tests timing JUnit file and define write method
 
-    speed_file = 'speedtests.xml'
+    speed_file = 'speedtests_time.xml'
 
     with open(speed_file, 'w') as f:
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -201,7 +201,7 @@ def speed():
             f.write('   <testsuite name="theano_speedtests" tests="{ntests}">\n'
                     .format(ntests=numpy.size(times)))
             for algo, time in zip(algos, times):
-                f.write('       <testcase class="test.speed.{label}" name="{algo}" time="{time}">'
+                f.write('       <testcase classname="speed.{label}" name="{algo}" time="{time}">'
                         .format(label=label, algo=algo, time=time))
                 f.write('       </testcase>\n')
             f.write('   </testsuite>\n')
