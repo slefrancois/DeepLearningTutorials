@@ -308,9 +308,9 @@ def speed():
     def write_junit(filename, algos, times, label):
         with open(filename, 'a') as f:
             for algo, time in zip(algos, times):
-                f.write('       <testcase classname="speed.{label}" name="{algo}" time="{time}">'
+                f.write('   <testcase classname="speed.{label}" name="{algo}" time="{time}">'
                         .format(label=label, algo=algo, time=time))
-                f.write('       </testcase>\n')
+                f.write('   </testcase>\n')
 
     test_total = numpy.size(float64_times) \
                  + numpy.size(float32_times) \
@@ -318,8 +318,7 @@ def speed():
 
     with open(speed_file, 'w') as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        f.write('<testsuites>\n')
-        f.write('   <testsuite name="theano_speedtests" tests="{ntests}">\n'
+        f.write('<testsuite name="theano_speedtests" tests="{ntests}">\n'
                 .format(ntests=numpy.size(test_total)))
 
     write_junit(speed_file, algo_executed, float64_times, label='float64')
@@ -327,5 +326,4 @@ def speed():
     write_junit(speed_file, algo_executed, gpu_times, label='gpu')
         
     with open(speed_file, 'a') as f:
-        f.write('   </testsuite>\n')
-        f.write('</testsuites>\n')
+        f.write('</testsuite>\n')
