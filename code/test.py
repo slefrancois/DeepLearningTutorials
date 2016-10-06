@@ -308,7 +308,7 @@ def speed():
     def write_junit(filename, algos, times, label):
         with open(filename, 'a') as f:
             for algo, time in zip(algos, times):
-                f.write('   <testcase classname="speed.{label}" name="{algo}" time="{time}">'
+                f.write('   <testcase classname="{label}" name="{algo}" time="{time}">'
                         .format(label=label, algo=algo, time=time))
                 f.write('   </testcase>\n')
 
